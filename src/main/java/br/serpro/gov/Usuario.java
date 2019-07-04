@@ -3,12 +3,13 @@ package br.serpro.gov;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Usuario {
+public class Usuario implements Comparable<Usuario> {
+
+
 
     public enum Tipo {
-        MOEDA, ESTRELA, TOPICO, COMENTARIO, CURTIDA
+        MOEDA, ESTRELA, TOPICO, COMENTARIO, CURTIDA;
     }
-
     private String nome;
 
     private Map<String, Integer> pontuacao;
@@ -36,5 +37,10 @@ public class Usuario {
 
     public void setPontuacao(String tipo, Integer pontos) {
         pontuacao.put(tipo, pontos);
+    }
+
+    @Override
+    public int compareTo(Usuario o) {
+        return 0;
     }
 }

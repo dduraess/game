@@ -31,4 +31,9 @@ public class ArmazenaMock implements Armazenamento {
         }
         return "o usuário " + nome + " tem " + usuario.getPontuacaoPorTipo(tipo) + " pontos do tipo " + tipo;
     }
+
+    @Override
+    public List<Usuario> retornarTodosUsuariosComAlgumTipoDePonto() {
+        return null;
+    }
 }
