@@ -29,6 +29,6 @@ public class PlacarTest {
     @Test
     public void testeRecuperarQtdePontosUsuarioPorTipo(){
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("batalha", "moeda", 15);
-        assertEquals("O usuário batalha tem 15 pontos do tipo moeda", armazenaMock.recuperarQtdePontosUsuarioPorTipo("batalha", "moeda"));
+        assertEquals("o usuário batalha tem 15 pontos do tipo moeda", armazenaMock.recuperarQtdePontosUsuarioPorTipo("batalha", "moeda"));
     }
 }
