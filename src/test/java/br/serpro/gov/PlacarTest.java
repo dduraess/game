@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -39,13 +40,31 @@ public class PlacarTest {
 
     @Test
     public void retornarTodosUsuariosQueReceberamAlgumTipoPonto(){
+
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("batalha", "moeda", 15);
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10);
+
         Usuario usuarioBatalha = new Usuario("batalha");
         usuarioBatalha.setPontuacao("moeda", 15);
+
         Usuario usuarioGuerra = new Usuario("guerra");
-        usuarioBatalha.setPontuacao("estrela", 10);
+        usuarioGuerra.setPontuacao("estrela", 10);
+
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioBatalha, usuarioGuerra));
-        assertArrayEquals(usuarios.toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
+
+        assertArrayEquals(getStrings(usuarios).toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
     }
+
+    private List<String> getStrings(List<Usuario> usuarios) {
+        List<String> testaListaPontuacoes = null;
+        for (Usuario usuario:usuarios) {
+            testaListaPontuacoes = new ArrayList<>(Arrays.asList(usuario.getNome()));
+            for (Map.Entry<String, Integer> entry: usuario.getPontuacaoGeral().entrySet()) {
+                testaListaPontuacoes.add(entry.getKey());
+                testaListaPontuacoes.add(entry.getValue().toString());
+            }
+        }
+        return testaListaPontuacoes;
+    }
+
 }

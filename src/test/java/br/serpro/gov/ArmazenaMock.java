@@ -1,9 +1,9 @@
 package br.serpro.gov;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ArmazenaMock implements Armazenamento {
 
@@ -33,7 +33,14 @@ public class ArmazenaMock implements Armazenamento {
     }
 
     @Override
-    public List<Usuario> retornarTodosUsuariosComAlgumTipoDePonto() {
-        return null;
+    public List<String> retornarTodosUsuariosComAlgumTipoDePonto() {
+        List<String> listaPontuacoes = null;
+        for (Usuario usuario:usuarios) {
+            listaPontuacoes = new ArrayList<>(Arrays.asList(usuario.getNome()));
+            for (Map.Entry<String, Integer> entry:usuario.getPontuacaoGeral().entrySet()) {
+                listaPontuacoes.add(entry.getKey());
+                listaPontuacoes.add(entry.getValue().toString());
+            }
+        } return listaPontuacoes;
     }
 }
