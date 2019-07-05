@@ -43,4 +43,9 @@ public class ArmazenaMock implements Armazenamento {
             }
         } return listaPontuacoes;
     }
+
+    @Override
+    public List<String> retornarTodosTiposPontoPorUsuario(String nome) {
+        return null;
+    }
 }

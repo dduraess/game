@@ -28,18 +28,18 @@ public class PlacarTest {
     }
 
     @Test
-    public void armazenarUsuarioRecebeuQtdePontosPorTipo() {
+    public void testeArmazenarUsuarioRecebeuQtdePontosPorTipo() {
         assertEquals("o usuário guerra recebeu 10 pontos do tipo estrela", armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10));
     }
 
     @Test
-    public void recuperarQtdePontosUsuarioPorTipo(){
+    public void testeRecuperarQtdePontosUsuarioPorTipo(){
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("batalha", "moeda", 15);
         assertEquals("o usuário batalha tem 15 pontos do tipo moeda", armazenaMock.recuperarQtdePontosUsuarioPorTipo("batalha", "moeda"));
     }
 
     @Test
-    public void retornarTodosUsuariosQueReceberamAlgumTipoPonto(){
+    public void testeRetornarTodosUsuariosQueReceberamAlgumTipoPonto(){
 
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("batalha", "moeda", 15);
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10);
@@ -52,10 +52,25 @@ public class PlacarTest {
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioBatalha, usuarioGuerra));
 
-        assertArrayEquals(getStrings(usuarios).toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
+        assertArrayEquals(getStringListPontuacoes(usuarios).toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
     }
 
-    private List<String> getStrings(List<Usuario> usuarios) {
+    @Test
+    public void testeRetornarTodosTiposPontoPorUsuario(){
+
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "moeda", 15);
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10);
+
+        Usuario usuarioGuerra = new Usuario("guerra");
+        usuarioGuerra.setPontuacao("moeda", 15);
+        usuarioGuerra.setPontuacao("estrela", 10);
+
+        List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioGuerra));
+
+        assertArrayEquals(getStringListPontuacoes(usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("guerra").toArray());
+    }
+
+    private List<String> getStringListPontuacoes(List<Usuario> usuarios) {
         List<String> testaListaPontuacoes = null;
         for (Usuario usuario:usuarios) {
             testaListaPontuacoes = new ArrayList<>(Arrays.asList(usuario.getNome()));
