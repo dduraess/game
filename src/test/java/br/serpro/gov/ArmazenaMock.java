@@ -34,10 +34,10 @@ public class ArmazenaMock implements Armazenamento {
 
     @Override
     public List<String> retornarTodosUsuariosComAlgumTipoDePonto() {
-        List<String> listaPontuacoes = null;
+        List<String> listaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
-            listaPontuacoes = new ArrayList<>(Arrays.asList(usuario.getNome()));
             for (Map.Entry<String, Integer> entry:usuario.getPontuacaoGeral().entrySet()) {
+                listaPontuacoes.add(usuario.getNome());
                 listaPontuacoes.add(entry.getKey());
                 listaPontuacoes.add(entry.getValue().toString());
             }
@@ -46,6 +46,15 @@ public class ArmazenaMock implements Armazenamento {
 
     @Override
     public List<String> retornarTodosTiposPontoPorUsuario(String nome) {
-        return null;
+        List<String> listaPontuacoes = new ArrayList<>();
+        for (Usuario usuario:usuarios) {
+            if (nome.equals(usuario.getNome())) {
+                for (Map.Entry<String, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
+                    listaPontuacoes.add(entry.getKey());
+                    listaPontuacoes.add(entry.getValue().toString());
+                }
+            }
+        }
+        return listaPontuacoes;
     }
 }

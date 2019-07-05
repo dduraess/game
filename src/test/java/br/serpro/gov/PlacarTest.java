@@ -52,7 +52,7 @@ public class PlacarTest {
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioBatalha, usuarioGuerra));
 
-        assertArrayEquals(getStringListPontuacoes(usuarios).toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
+        assertArrayEquals(getStringListPontuacaoGeral(usuarios).toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
     }
 
     @Test
@@ -67,16 +67,29 @@ public class PlacarTest {
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioGuerra));
 
-        assertArrayEquals(getStringListPontuacoes(usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("guerra").toArray());
+        assertArrayEquals(getStringListPontuacaoPorUsuario(usuarioGuerra.getNome(), usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("guerra").toArray());
     }
 
-    private List<String> getStringListPontuacoes(List<Usuario> usuarios) {
-        List<String> testaListaPontuacoes = null;
+    private List<String> getStringListPontuacaoGeral(List<Usuario> usuarios) {
+        List<String> testaListaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
-            testaListaPontuacoes = new ArrayList<>(Arrays.asList(usuario.getNome()));
             for (Map.Entry<String, Integer> entry: usuario.getPontuacaoGeral().entrySet()) {
+                testaListaPontuacoes.add(usuario.getNome());
                 testaListaPontuacoes.add(entry.getKey());
                 testaListaPontuacoes.add(entry.getValue().toString());
+            }
+        }
+        return testaListaPontuacoes;
+    }
+
+    public List<String> getStringListPontuacaoPorUsuario(String nome, List<Usuario> usuarios) {
+        List<String> testaListaPontuacoes = new ArrayList<>();
+        for (Usuario usuario:usuarios) {
+            if (nome.equals(usuario.getNome())) {
+                for (Map.Entry<String, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
+                    testaListaPontuacoes.add(entry.getKey());
+                    testaListaPontuacoes.add(entry.getValue().toString());
+                }
             }
         }
         return testaListaPontuacoes;
