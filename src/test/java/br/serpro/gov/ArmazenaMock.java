@@ -1,9 +1,7 @@
 package br.serpro.gov;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class ArmazenaMock implements Armazenamento {
 
@@ -19,6 +17,12 @@ public class ArmazenaMock implements Armazenamento {
         usuario = new Usuario(nome);
         usuario.setPontuacao(tipo, pontos);
         usuarios.add(usuario);
+        Scanner leitura = null;
+        try {
+            leitura = new Scanner(new BufferedReader(new FileReader("scores")));
+        } catch (FileNotFoundException e) {
+//            new BufferedWriter(new FileWriter("scores"));
+        }
         return "o usuário " + nome + " recebeu " + usuario.getPontuacaoPorTipo(tipo) + " pontos do tipo " + tipo;
     }
 
