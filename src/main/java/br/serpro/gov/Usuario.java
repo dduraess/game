@@ -8,10 +8,6 @@ public class Usuario implements Comparable<Usuario> {
     private String nome;
     private Map<String, Integer> pontuacao;
 
-    public enum Tipo {
-        MOEDA, ESTRELA, TOPICO, COMENTARIO, CURTIDA;
-    }
-
     public Usuario(String nome){
         this.nome=nome;
         this.pontuacao = new HashMap<>();

@@ -3,6 +3,7 @@ package br.serpro.gov;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for simple Placar.
@@ -69,6 +71,17 @@ public class PlacarTest {
 
         assertArrayEquals(getStringListPontuacaoPorUsuario(usuarioGuerra.getNome(), usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("guerra").toArray());
     }
+
+    @Test
+    public void testeGravarArquivoSemArquivoLido(){
+        File file = new File("scores");
+        file.delete();
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("davison", "curtida", 9);
+        assertTrue(file.canRead());
+
+    }
+
+
 
     private List<String> getStringListPontuacaoGeral(List<Usuario> usuarios) {
         List<String> testaListaPontuacoes = new ArrayList<>();
