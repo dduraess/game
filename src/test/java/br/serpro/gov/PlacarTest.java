@@ -31,28 +31,32 @@ public class PlacarTest {
 
     @Test
     public void testeArmazenarUsuarioRecebeuQtdePontosPorTipo() {
-        assertEquals("o usuário guerra recebeu 10 pontos do tipo estrela", armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10));
+        assertEquals("o usuário GUERRA recebeu 10 pontos do tipo ESTRELA", armazenaMock.armazenarQtdePontosUsuarioPorTipo("GUERRA", "ESTRELA",10));
     }
 
     @Test
     public void testeRecuperarQtdePontosUsuarioPorTipo(){
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("batalha", "moeda", 15);
-        assertEquals("o usuário batalha tem 15 pontos do tipo moeda", armazenaMock.recuperarQtdePontosUsuarioPorTipo("batalha", "moeda"));
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("BATALHA", "MOEDA", 15);
+        assertEquals("o usuário BATALHA tem 15 pontos do tipo MOEDA", armazenaMock.recuperarQtdePontosUsuarioPorTipo("BATALHA", "MOEDA"));
     }
 
     @Test
     public void testeRetornarTodosUsuariosQueReceberamAlgumTipoPonto(){
 
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("batalha", "moeda", 15);
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10);
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("BATALHA", "MOEDA", 15);
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("GUERRA", "ESTRELA",10);
 
-        Usuario usuarioBatalha = new Usuario("batalha");
-        usuarioBatalha.setPontuacao("moeda", 15);
+        Usuario usuarioBatalha = new Usuario("BATALHA");
+        usuarioBatalha.setPontuacao(TipoPonto.valueOf("MOEDA"), 15);
 
-        Usuario usuarioGuerra = new Usuario("guerra");
-        usuarioGuerra.setPontuacao("estrela", 10);
+        Usuario usuarioGuerra = new Usuario("GUERRA");
+        usuarioGuerra.setPontuacao(TipoPonto.valueOf("ESTRELA"), 10);
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioBatalha, usuarioGuerra));
+
+        for (String s:armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto()) {
+            System.out.println(s);
+        }
 
         assertArrayEquals(getStringListPontuacaoGeral(usuarios).toArray(), armazenaMock.retornarTodosUsuariosComAlgumTipoDePonto().toArray());
     }
@@ -60,37 +64,36 @@ public class PlacarTest {
     @Test
     public void testeRetornarTodosTiposPontoPorUsuario(){
 
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "moeda", 15);
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("guerra", "estrela",10);
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("GUERRA", "MOEDA", 15);
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("GUERRA", "ESTRELA",10);
 
-        Usuario usuarioGuerra = new Usuario("guerra");
-        usuarioGuerra.setPontuacao("moeda", 15);
-        usuarioGuerra.setPontuacao("estrela", 10);
+        Usuario usuarioGuerra = new Usuario("GUERRA");
+        usuarioGuerra.setPontuacao(TipoPonto.valueOf("MOEDA"), 15);
+        usuarioGuerra.setPontuacao(TipoPonto.valueOf("ESTRELA"), 10);
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioGuerra));
 
-        assertArrayEquals(getStringListPontuacaoPorUsuario(usuarioGuerra.getNome(), usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("guerra").toArray());
+        assertArrayEquals(getStringListPontuacaoPorUsuario(usuarioGuerra.getNome(), usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("GUERRA").toArray());
     }
 
     @Test
     public void testeGravarArquivoSemArquivoLido(){
         File file = new File("scores");
         file.delete();
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("davison", "curtida", 9);
+        armazenaMock.armazenarQtdePontosUsuarioPorTipo("DAVISON", "CURTIDA", 9);
         assertTrue(file.canRead());
 
     }
 
-
-
     private List<String> getStringListPontuacaoGeral(List<Usuario> usuarios) {
         List<String> testaListaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
-            for (Map.Entry<String, Integer> entry: usuario.getPontuacaoGeral().entrySet()) {
-                testaListaPontuacoes.add(usuario.getNome());
-                testaListaPontuacoes.add(entry.getKey());
-                testaListaPontuacoes.add(entry.getValue().toString());
+            testaListaPontuacoes.add(usuario.getNome() + ";");
+            for (Map.Entry<TipoPonto, Integer> entry: usuario.getPontuacaoGeral().entrySet()) {
+                testaListaPontuacoes.add(entry.getKey().toString() + ";");
+                testaListaPontuacoes.add(entry.getValue().toString() + ";");
             }
+            testaListaPontuacoes.add("\n");
         }
         return testaListaPontuacoes;
     }
@@ -99,8 +102,8 @@ public class PlacarTest {
         List<String> testaListaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
             if (nome.equals(usuario.getNome())) {
-                for (Map.Entry<String, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
-                    testaListaPontuacoes.add(entry.getKey());
+                for (Map.Entry<TipoPonto, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
+                    testaListaPontuacoes.add(entry.getKey().toString());
                     testaListaPontuacoes.add(entry.getValue().toString());
                 }
             }

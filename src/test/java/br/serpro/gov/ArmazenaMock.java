@@ -1,35 +1,52 @@
 package br.serpro.gov;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ArmazenaMock implements Armazenamento {
 
-    Usuario usuario;
-    List<Usuario> usuarios;
+    private Usuario usuario;
+    private List<Usuario> usuarios;
 
-    public ArmazenaMock() {
+    ArmazenaMock() {
         usuarios = new ArrayList<>();
     }
 
     @Override
     public String armazenarQtdePontosUsuarioPorTipo(String nome, String tipo, Integer pontos) {
-        usuario = new Usuario(nome);
-        try {
-            for (Map.Entry<String, Integer> entry:lerPontuacaoGravadaUsuario(nome).entrySet()) {
-                usuario.setPontuacao(entry.getKey(),entry.getValue());
-            }
-        } catch (FileNotFoundException e) {
-            FileWriter fileWriter = null;
-            try {
-                fileWriter = new FileWriter("scores");
-                fileWriter.write(iniciaPontuacao(tipo, pontos));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+        if (retornarUsuarioExistente(nome) == null) {
+            usuario = new Usuario(nome);
+            usuario.setPontuacao(TipoPonto.valueOf(tipo), pontos);
+            usuarios.add(usuario);
+        } else {
+            retornarUsuarioExistente(nome).setPontuacao(TipoPonto.valueOf(tipo), pontos);
         }
-        usuarios.add(usuario);
+        String conteudoAGravar = scoresComoTexto();
+        try (FileWriter fileWriter = new FileWriter("scores")) {
+            fileWriter.write(conteudoAGravar);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return "o usuário " + nome + " recebeu " + usuario.getPontuacaoPorTipo(tipo) + " pontos do tipo " + tipo;
+    }
+
+    private String scoresComoTexto() {
+        String texto = "";
+        for (String s:retornarTodosUsuariosComAlgumTipoDePonto()) {
+            texto = texto.concat(s);
+        }
+        return texto;
+    }
+
+    private Usuario retornarUsuarioExistente(String nome) {
+        for (Usuario usuario:usuarios) {
+            if (nome.equals(usuario.getNome())) {
+                return usuario;
+            }
+        } return null;
     }
 
     @Override
@@ -46,25 +63,13 @@ public class ArmazenaMock implements Armazenamento {
     public List<String> retornarTodosUsuariosComAlgumTipoDePonto() {
         List<String> listaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
-            for (Map.Entry<String, Integer> entry:usuario.getPontuacaoGeral().entrySet()) {
-                listaPontuacoes.add(usuario.getNome());
-                listaPontuacoes.add(entry.getKey());
-                listaPontuacoes.add(entry.getValue().toString());
+            listaPontuacoes.add(usuario.getNome() + ";");
+            for (Map.Entry<TipoPonto, Integer> entry:usuario.getPontuacaoGeral().entrySet()) {
+                listaPontuacoes.add(entry.getKey().toString() + ";");
+                listaPontuacoes.add(entry.getValue().toString() + ";");
             }
+            listaPontuacoes.add("\n");
         } return listaPontuacoes;
-    }
-
-    private String iniciaPontuacao(String tipo, Integer pontos) {
-        String saida = usuario.getNome() + ";";
-        List<String> listaTiposPonto = new ArrayList<>(Arrays.asList("moeda", "estrela", "topico", "comentario", "curtida"));
-        for (String s:listaTiposPonto) {
-            if (s.equals(tipo)) {
-                usuario.setPontuacao(tipo, pontos);
-            } else {
-                usuario.setPontuacao(s, 0);
-            }
-            saida = saida.concat(usuario.getPontuacaoPorTipo(s).toString() + "\n");
-        } return saida;
     }
 
     @Override
@@ -72,8 +77,8 @@ public class ArmazenaMock implements Armazenamento {
         List<String> listaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
             if (nome.equals(usuario.getNome())) {
-                for (Map.Entry<String, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
-                    listaPontuacoes.add(entry.getKey());
+                for (Map.Entry<TipoPonto, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
+                    listaPontuacoes.add(entry.getKey().toString());
                     listaPontuacoes.add(entry.getValue().toString());
                 }
             }
@@ -81,29 +86,4 @@ public class ArmazenaMock implements Armazenamento {
         return listaPontuacoes;
     }
 
-    private Map<String, Integer> lerPontuacaoGravadaUsuario(String nome) throws FileNotFoundException {
-        Map<String, Integer> pontuacaoLida = new HashMap<>();
-        List<String> listaTiposPonto = new ArrayList<>(Arrays.asList("moeda", "estrela", "topico", "comentario", "curtida"));
-        for (String s:lerConteudoAquivo()) {
-            if(s.contains(nome)){
-                String pontosSemNomeUsuario = s.replaceAll(nome + ";", "");
-                Scanner scanner = new Scanner(pontosSemNomeUsuario);
-                scanner.useDelimiter(";");
-                Integer indiceLeituraPorTipo = 0;
-                while (scanner.hasNext()) {
-                    pontuacaoLida.put(listaTiposPonto.get(indiceLeituraPorTipo),Integer.valueOf(scanner.next()));
-                    indiceLeituraPorTipo++;
-                }
-            }
-        } return pontuacaoLida;
-    }
-
-    private List<String> lerConteudoAquivo() throws FileNotFoundException {
-        List<String> linhas = new ArrayList<>();
-        Scanner leitura = new Scanner(new BufferedReader(new FileReader("scores")));
-        leitura.useDelimiter("\n");
-        while(leitura.hasNext()){
-            linhas.add(leitura.next());
-        } return linhas;
-    }
 }
