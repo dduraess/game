@@ -3,7 +3,7 @@ package br.serpro.gov;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,10 +47,10 @@ public class PlacarTest {
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("GUERRA", "ESTRELA",10);
 
         Usuario usuarioBatalha = new Usuario("BATALHA");
-        usuarioBatalha.setPontuacao(TipoPonto.valueOf("MOEDA"), 15);
+        usuarioBatalha.setPontuacaoPorTipo(TipoPonto.valueOf("MOEDA"), 15);
 
         Usuario usuarioGuerra = new Usuario("GUERRA");
-        usuarioGuerra.setPontuacao(TipoPonto.valueOf("ESTRELA"), 10);
+        usuarioGuerra.setPontuacaoPorTipo(TipoPonto.valueOf("ESTRELA"), 10);
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioBatalha, usuarioGuerra));
 
@@ -68,44 +68,58 @@ public class PlacarTest {
         armazenaMock.armazenarQtdePontosUsuarioPorTipo("GUERRA", "ESTRELA",10);
 
         Usuario usuarioGuerra = new Usuario("GUERRA");
-        usuarioGuerra.setPontuacao(TipoPonto.valueOf("MOEDA"), 15);
-        usuarioGuerra.setPontuacao(TipoPonto.valueOf("ESTRELA"), 10);
+        usuarioGuerra.setPontuacaoPorTipo(TipoPonto.valueOf("MOEDA"), 15);
+        usuarioGuerra.setPontuacaoPorTipo(TipoPonto.valueOf("ESTRELA"), 10);
 
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(usuarioGuerra));
 
         assertArrayEquals(getStringListPontuacaoPorUsuario(usuarioGuerra.getNome(), usuarios).toArray(), armazenaMock.retornarTodosTiposPontoPorUsuario("GUERRA").toArray());
     }
 
-    @Test
-    public void testeGravarArquivoSemArquivoLido(){
-        File file = new File("scores");
-        file.delete();
-        armazenaMock.armazenarQtdePontosUsuarioPorTipo("DAVISON", "CURTIDA", 9);
-        assertTrue(file.canRead());
-
-    }
+//    @Test
+//    public void testeGravarArquivoSemArquivoLido(){
+//        File file = new File("scores");
+//        file.delete();
+//        armazenaMock.armazenarQtdePontosUsuarioPorTipo("DAVISON", "CURTIDA", 9);
+//        assertTrue(file.canRead());
+//
+//    }
+//
+//    @Test
+//    public void testeGravarArquivoLeituraPontuacaoExistenteDeOutrosUsuarios(){
+//        armazenaMock.armazenarQtdePontosUsuarioPorTipo("AUGUSTO", "COMENTARIO", 5);
+//        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("scores"))) {
+//            String linha;
+//            String testaSaida = "";
+//            while ((linha = bufferedReader.readLine())!=null){
+//                testaSaida = testaSaida.concat(bufferedReader.readLine());
+//            }
+//            assertTrue(linha.contains("AUGUSTO"));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     private List<String> getStringListPontuacaoGeral(List<Usuario> usuarios) {
-        List<String> testaListaPontuacoes = new ArrayList<>();
+        List<String> testaListaUsuariosPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
-            testaListaPontuacoes.add(usuario.getNome() + ";");
-            for (Map.Entry<TipoPonto, Integer> entry: usuario.getPontuacaoGeral().entrySet()) {
-                testaListaPontuacoes.add(entry.getKey().toString() + ";");
-                testaListaPontuacoes.add(entry.getValue().toString() + ";");
-            }
-            testaListaPontuacoes.add("\n");
+            testaListaUsuariosPontuacoes.addAll(getStringListPontuacaoPorUsuario(usuario.getNome(), usuarios));
         }
-        return testaListaPontuacoes;
+        return testaListaUsuariosPontuacoes;
     }
 
     public List<String> getStringListPontuacaoPorUsuario(String nome, List<Usuario> usuarios) {
         List<String> testaListaPontuacoes = new ArrayList<>();
         for (Usuario usuario:usuarios) {
             if (nome.equals(usuario.getNome())) {
+                testaListaPontuacoes.add(usuario.getNome() + ";");
                 for (Map.Entry<TipoPonto, Integer> entry : usuario.getPontuacaoGeral().entrySet()) {
-                    testaListaPontuacoes.add(entry.getKey().toString());
-                    testaListaPontuacoes.add(entry.getValue().toString());
+                    testaListaPontuacoes.add(entry.getValue().toString() + ";");
                 }
+//                testaListaPontuacoes.add("\n");
             }
         }
         return testaListaPontuacoes;
